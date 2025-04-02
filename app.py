@@ -12,26 +12,29 @@ from langchain.chat_models import ChatOpenAI
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.pydantic_v1 import BaseModel, Field
 from meal_analyzer import prepare_llm_prompt, encode_image
+from typing import List, Dict, Any, Optional, Union
+
 
 app = FastAPI()
 
 # Configuration
-PUBLIC_DIR = Path("../public")  # Adjust this to your actual public directory path
+PUBLIC_DIR = Path("C:\\Users\\USER\\source\\repos\\smartBites\\server\\public")  # Adjust this to your actual public directory path
 
-# Models for request validation
+# Replace the ProductPicture class with this more flexible version
 class ProductPicture(BaseModel):
     id: int
     imageUrl: str
-    weight: str
+    weight: Union[str, float]  # Accept both string and float
     plateId: str
-    upperDiameter: str
-    lowerDiameter: str
-    depth: str
+    upperDiameter: Union[str, float]  # Accept both string and float
+    lowerDiameter: Union[str, float]  # Accept both string and float
+    depth: Union[str, float]  # Accept both string and float
 
+# Make pictures field optional in Product class
 class Product(BaseModel):
     sku: str
     name: str
-    pictures: List[ProductPicture]
+    pictures: List[ProductPicture] = []  # Default to empty list
     weight_in_req: float
 
 class MealDetails(BaseModel):

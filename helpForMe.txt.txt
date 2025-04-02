@@ -6,3 +6,94 @@ Run: .\venv\Scripts\activate
 You should now see (venv) at the beginning of your prompt, indicating that the virtual environment is active.
 When you are done, run deactivate
 Then, if you changed the execution policy, and wish to revert it, run Set-ExecutionPolicy -ExecutionPolicy Restricted -Scope CurrentUser
+
+
+Meal Analysis Service
+This service analyzes meal images to determine the weights of different food products before and after consumption. It uses LLMs to estimate product weights based on reference images and returns structured analysis.
+Setup
+
+Create a Python virtual environment and activate it:
+python -m venv venv
+.\venv\Scripts\activate
+
+Install the required packages:
+pip install -r requirements.txt
+
+Update the PUBLIC_DIR path in app.py to point to your actual public directory.
+
+Running the Service
+Start the service:
+python app.py
+This will start the FastAPI service on http://127.0.0.1:8000.
+API Endpoints
+POST /analyze-meal
+Analyzes a meal by comparing before and after images and using product reference images.
+Request body:
+jsonCopy{
+  "meal_details": {
+    "weight_before": 550,
+    "weight_after": 20,
+    "person_id": "123456",
+    "description": "eaten in sunday morning",
+    "picture_before": "uploads\\meals_analysis_req\\images_before.jpg",
+    "picture_after": "uploads\\meals_analysis_req\\images_after.jpg",
+    "products": [
+      {
+        "sku": "BRD001",
+        "name": "bread",
+        "pictures": [
+          {
+            "id": 2,
+            "imageUrl": "uploads/product_pictures/bread_plate.jpg",
+            "weight": "0.80",
+            "plateId": "PL002",
+            "upperDiameter": "25.00",
+            "lowerDiameter": "18.00",
+            "depth": "3.00"
+          }
+        ],
+        "weight_in_req": 200
+      }
+    ]
+  },
+  "model_name": "gpt-4-vision-preview"
+}
+Response:
+jsonCopy{
+  "analysis": {
+    "total_estimated_weight_before": 550.0,
+    "total_estimated_weight_after": 20.0,
+    "total_estimated_consumed": 530.0,
+    "products_analysis": [
+      {
+        "sku": "BRD001",
+        "name": "bread",
+        "estimated_weight_before": 200.0,
+        "estimated_weight_after": 10.0,
+        "estimated_consumed": 190.0,
+        "confidence": 85
+      }
+    ],
+    "notes": "Analysis based on visual comparison with reference images."
+  }
+}
+Customizing the LLM Model
+You can specify different LLM models in the request by changing the model_name parameter:
+
+"gpt-4-vision-preview" - For best visual analysis
+"gpt-4" - For good analysis with less focus on visual details
+"gpt-3.5-turbo" - For faster, less accurate analysis
+
+Error Handling
+The service handles several types of errors:
+
+Missing image files
+Invalid request format
+LLM processing errors
+
+All errors return appropriate HTTP status codes and descriptive messages.
+
+
+
+
+# change the types of the class fields in app.py and the object analysisRequest
