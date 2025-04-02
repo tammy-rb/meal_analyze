@@ -1,0 +1,8 @@
+Steps in Order:
+
+Open PowerShell as administrator.
+Run: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Run: .\venv\Scripts\activate
+You should now see (venv) at the beginning of your prompt, indicating that the virtual environment is active.
+When you are done, run deactivate
+Then, if you changed the execution policy, and wish to revert it, run Set-ExecutionPolicy -ExecutionPolicy Restricted -Scope CurrentUser
